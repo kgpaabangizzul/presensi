@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Daftar · AbsensiPro{% endblock %}
+{% block body %}
+<div style="min-height:100dvh;background:linear-gradient(145deg,#0f172a,#1e3a5f);padding:20px 16px 40px">
+  <div style="max-width:520px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:20px">
+      <a href="/login" style="display:inline-flex;align-items:center;gap:6px;color:#93c5fd;font-size:13px;text-decoration:none;margin-bottom:16px">
+        <svg style="width:14px;height:14px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>Kembali ke Login
+      </a>
+      <h1 style="color:#fff;font-size:22px;font-weight:800">Daftar Akun</h1>
+      <p style="color:#93c5fd;font-size:13px;margin-top:4px">Isi data lengkap untuk mendaftar</p>
+    </div>
+    <div style="background:#fff;border-radius:24px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+      <form method="POST" enctype="multipart/form-data" style="display:flex;flex-direction:column;gap:0">
+        <!-- Foto -->
+        <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:20px">
+          <div onclick="document.getElementById('fotoInput').click()" style="position:relative;cursor:pointer">
+            <img id="preview" style="display:none;width:88px;height:88px;border-radius:18px;object-fit:cover;border:3px solid #dbeafe">
+            <div id="placeholder" style="width:88px;height:88px;border-radius:18px;background:#eff6ff;border:2px dashed #93c5fd;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <svg style="width:28px;height:28px;color:#93c5fd" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
+              <span style="font-size:10px;color:#93c5fd;margin-top:4px;font-weight:600">Upload Foto</span>
+            </div>
+            <div style="position:absolute;bottom:-6px;right:-6px;width:24px;height:24px;background:#2563eb;border-radius:99px;display:flex;align-items:center;justify-content:center;border:2px solid #fff">
+              <svg style="width:12px;height:12px;color:#fff" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
+            </div>
+          </div>
+          <input type="file" id="fotoInput" name="foto" accept="image/*" style="display:none" onchange="prevFoto(this)">
+          <p style="font-size:11px;color:#94a3b8;margin-top:8px">Tap untuk upload foto</p>
+        </div>
+        <!-- Fields -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+          <div>
+            <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:5px">NIK <span style="color:#ef4444">*</span></label>
+            <input type="text" name="nik" required placeholder="EMP001" class="input-field" style="font-size:15px">
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:5px">Nama Lengkap <span style="color:#ef4444">*</span></label>
+            <input type="text" name="nama" required placeholder="Nama KTP" class="input-field" style="font-size:15px">
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:5px">Email <span style="color:#ef4444">*</span></label>
+          <input type="email" name="email" required placeholder="email@perusahaan.com" class="input-field" style="font-size:16px">
+        </div>
+        <div style="margin-bottom:12px">
+          <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:5px">Password <span style="color:#ef4444">*</span></label>
+          <input type="password" name="password" required placeholder="Min. 6 karakter" minlength="6" class="input-field" style="font-size:16px">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+          <div>
+            <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:5px">Jabatan</label>
+            <input type="text" name="jabatan" placeholder="Staff IT" class="input-field" style="font-size:15px">
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:5px">Departemen</label>
+            <select name="departemen_id" class="input-field" style="font-size:15px">
+              <option value="">-- Pilih --</option>
+              {% for d in depts %}<option value="{{ d.id }}">{{ d.nama }}</option>{% endfor %}
+            </select>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:5px">No. HP</label>
+          <input type="tel" name="no_hp" placeholder="08xxxxxxxxxx" class="input-field" style="font-size:16px">
+        </div>
+        <div style="margin-bottom:16px">
+          <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:5px">Alamat</label>
+          <textarea name="alamat" rows="2" placeholder="Alamat lengkap" class="input-field" style="resize:none;font-size:15px"></textarea>
+        </div>
+        <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:12px;padding:12px;margin-bottom:16px;display:flex;gap:8px">
+          <span style="font-size:16px;flex-shrink:0">⚠️</span>
+          <p style="font-size:12px;color:#92400e;line-height:1.4">Akun Anda akan diverifikasi oleh admin sebelum dapat digunakan.</p>
+        </div>
+        <button type="submit" class="btn-primary" style="width:100%;padding:14px;font-size:15px">Daftar Sekarang</button>
+        <p style="text-align:center;font-size:13px;color:#94a3b8;margin-top:16px">
+          Sudah punya akun? <a href="/login" style="color:#2563eb;font-weight:600;text-decoration:none">Masuk</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+function prevFoto(i){if(i.files&&i.files[0]){const r=new FileReader();r.onload=e=>{const p=document.getElementById('preview');p.src=e.target.result;p.style.display='block';document.getElementById('placeholder').style.display='none'};r.readAsDataURL(i.files[0])}}
+</script>
+{% endblock %}

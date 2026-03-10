@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}Login · AbsensiPro{% endblock %}
+{% block body %}
+<div style="min-height:100dvh;display:flex;background:linear-gradient(145deg,#0f172a 0%,#1e3a5f 60%,#0f4c81 100%)">
+  <!-- Desktop left panel -->
+  <div class="hidden lg:flex" style="width:45%;flex-direction:column;align-items:center;justify-content:center;padding:48px;color:#fff;position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0;opacity:.06">
+      <div style="position:absolute;top:15%;left:10%;width:280px;height:280px;border-radius:50%;border:2px solid #fff"></div>
+      <div style="position:absolute;bottom:15%;right:10%;width:180px;height:180px;border-radius:50%;border:1px solid #fff"></div>
+    </div>
+    <div style="position:relative;text-align:center;max-width:360px">
+      <div style="width:80px;height:80px;background:rgba(255,255,255,.15);border-radius:24px;display:flex;align-items:center;justify-content:center;margin:0 auto 28px;backdrop-filter:blur(8px)">
+        <svg style="width:40px;height:40px;color:#fff" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+      </div>
+      <h1 style="font-size:36px;font-weight:800;margin-bottom:10px">AbsensiPro</h1>
+      <p style="color:#93c5fd;font-size:16px;margin-bottom:36px">Sistem Manajemen Kehadiran Digital</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        <div style="background:rgba(255,255,255,.1);border-radius:16px;padding:16px;backdrop-filter:blur(8px)">
+          <div style="font-size:24px;margin-bottom:6px">📍</div>
+          <p style="font-size:12px;color:#bfdbfe;font-weight:500">GPS Tracking</p>
+        </div>
+        <div style="background:rgba(255,255,255,.1);border-radius:16px;padding:16px;backdrop-filter:blur(8px)">
+          <div style="font-size:24px;margin-bottom:6px">📸</div>
+          <p style="font-size:12px;color:#bfdbfe;font-weight:500">Foto Selfie</p>
+        </div>
+        <div style="background:rgba(255,255,255,.1);border-radius:16px;padding:16px;backdrop-filter:blur(8px)">
+          <div style="font-size:24px;margin-bottom:6px">📊</div>
+          <p style="font-size:12px;color:#bfdbfe;font-weight:500">Laporan</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right/full login form -->
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:24px">
+    <div style="width:100%;max-width:400px">
+      <!-- Mobile logo -->
+      <div class="lg:hidden" style="text-align:center;margin-bottom:28px">
+        <div style="width:64px;height:64px;background:rgba(255,255,255,.15);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;backdrop-filter:blur(8px)">
+          <svg style="width:32px;height:32px;color:#fff" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        </div>
+        <h1 style="color:#fff;font-size:24px;font-weight:800">AbsensiPro</h1>
+        <p style="color:#93c5fd;font-size:13px;margin-top:4px">Portal Kehadiran Digital</p>
+      </div>
+      <!-- Card -->
+      <div style="background:#fff;border-radius:24px;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+        <h2 style="font-size:22px;font-weight:700;color:#1e293b;margin-bottom:4px">Selamat Datang 👋</h2>
+        <p style="color:#94a3b8;font-size:14px;margin-bottom:28px">Masuk ke akun Anda</p>
+        <form method="POST" style="display:flex;flex-direction:column;gap:16px">
+          <div>
+            <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Email</label>
+            <input type="email" name="email" required placeholder="email@perusahaan.com" class="input-field" style="font-size:16px">
+          </div>
+          <div>
+            <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Password</label>
+            <input type="password" name="password" required placeholder="••••••••" class="input-field" style="font-size:16px">
+          </div>
+          <button type="submit" class="btn-primary" style="width:100%;padding:14px;font-size:15px;margin-top:4px">
+            Masuk Sekarang
+          </button>
+        </form>
+        <div style="text-align:center;margin-top:20px">
+          <span style="color:#94a3b8;font-size:13px">Belum punya akun? </span>
+          <a href="/register" style="color:#2563eb;font-weight:600;font-size:13px;text-decoration:none">Daftar</a>
+        </div>
+        <div style="margin-top:16px;background:#f8fafc;border-radius:12px;padding:12px;text-align:center">
+          <p style="font-size:11px;color:#94a3b8;font-weight:500">Demo: admin@absensi.com / admin123</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

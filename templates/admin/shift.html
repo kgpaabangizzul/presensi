@@ -1,0 +1,156 @@
+{% extends 'admin/layout.html' %}
+{% block page_title %}Master Shift{% endblock %}
+{% block content %}
+<div class="space-y-6">
+  <!-- Form Tambah -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+    <h3 class="font-bold text-slate-800 mb-4">+ Tambah Shift Baru</h3>
+    <form method="POST" action="/admin/shift/tambah" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 items-end">
+      <div class="col-span-2 md:col-span-1">
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Shift *</label>
+        <input type="text" name="nama" required placeholder="cth: Shift Pagi" class="input-field text-sm py-2">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Jam Masuk *</label>
+        <input type="time" name="jam_masuk" required value="08:00" class="input-field text-sm py-2">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Jam Keluar *</label>
+        <input type="time" name="jam_keluar" required value="17:00" class="input-field text-sm py-2">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Toleransi (menit)</label>
+        <input type="number" name="toleransi_menit" value="15" min="0" max="120" class="input-field text-sm py-2">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1">Warna</label>
+        <div class="flex items-center gap-2">
+          <input type="color" name="warna" value="#10b981" class="h-9 w-14 rounded-lg border border-slate-200 cursor-pointer p-1">
+        </div>
+      </div>
+      <button type="submit" class="btn-primary py-2 h-10">Tambah</button>
+    </form>
+  </div>
+
+  <!-- Daftar Shift -->
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+    {% for s in shifts %}
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      <!-- Header -->
+      <div class="p-5" style="background: linear-gradient(135deg, {{ s.warna }}22 0%, {{ s.warna }}11 100%); border-left: 4px solid {{ s.warna }}">
+        <div class="flex items-start justify-between">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <div class="w-3 h-3 rounded-full" style="background:{{ s.warna }}"></div>
+              <p class="font-bold text-slate-800">{{ s.nama }}</p>
+              {% if not s.aktif %}<span class="badge-rejected text-xs">Nonaktif</span>{% endif %}
+            </div>
+            <div class="flex items-center gap-3 mt-2">
+              <div class="text-center">
+                <p class="text-xs text-slate-400">Masuk</p>
+                <p class="text-xl font-bold tabular-nums" style="color:{{ s.warna }}">{{ s.jam_masuk }}</p>
+              </div>
+              <div class="text-slate-300 text-lg">→</div>
+              <div class="text-center">
+                <p class="text-xs text-slate-400">Keluar</p>
+                <p class="text-xl font-bold tabular-nums text-slate-600">{{ s.jam_keluar }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-xs text-slate-400">Toleransi</div>
+            <div class="text-lg font-bold text-slate-700">{{ s.toleransi_menit }}m</div>
+          </div>
+        </div>
+        {% if s.deskripsi %}<p class="text-xs text-slate-400 mt-2">{{ s.deskripsi }}</p>{% endif %}
+      </div>
+      <!-- Stats -->
+      <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+        <span>👥 {{ s.total_pegawai }} pegawai</span>
+        <span>🏢 {{ s.total_dept }} departemen</span>
+      </div>
+      <!-- Actions -->
+      <div class="px-5 py-3 border-t border-slate-100 flex gap-2">
+        <button onclick="toggleEditShift({{ s.id }})" class="flex-1 text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-1.5 rounded-lg transition-colors">✏ Edit</button>
+        <form method="POST" action="/admin/shift/hapus/{{ s.id }}" onsubmit="return confirm('Hapus shift {{ s.nama }}?')" class="flex-shrink-0">
+          <button type="submit" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 font-semibold px-3 py-1.5 rounded-lg transition-colors">🗑</button>
+        </form>
+      </div>
+      <!-- Edit Panel -->
+      <div id="edit-shift-{{ s.id }}" class="hidden px-5 pb-5">
+        <div class="border-t border-slate-100 pt-4">
+          <form method="POST" action="/admin/shift/edit/{{ s.id }}" class="space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+              <div class="col-span-2">
+                <label class="text-xs font-semibold text-slate-600 block mb-1">Nama Shift</label>
+                <input type="text" name="nama" value="{{ s.nama }}" class="input-field text-sm py-2" required>
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-600 block mb-1">Jam Masuk</label>
+                <input type="time" name="jam_masuk" value="{{ s.jam_masuk }}" class="input-field text-sm py-2" required>
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-600 block mb-1">Jam Keluar</label>
+                <input type="time" name="jam_keluar" value="{{ s.jam_keluar }}" class="input-field text-sm py-2" required>
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-600 block mb-1">Toleransi (mnt)</label>
+                <input type="number" name="toleransi_menit" value="{{ s.toleransi_menit }}" min="0" max="120" class="input-field text-sm py-2">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-600 block mb-1">Warna</label>
+                <input type="color" name="warna" value="{{ s.warna }}" class="h-10 w-full rounded-lg border border-slate-200 p-1 cursor-pointer">
+              </div>
+              <div class="col-span-2">
+                <label class="text-xs font-semibold text-slate-600 block mb-1">Deskripsi</label>
+                <input type="text" name="deskripsi" value="{{ s.deskripsi or '' }}" class="input-field text-sm py-2" placeholder="Opsional">
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="checkbox" name="aktif" id="aktif-s-{{ s.id }}" {% if s.aktif %}checked{% endif %} class="rounded text-blue-500">
+              <label for="aktif-s-{{ s.id }}" class="text-xs text-slate-600">Shift aktif</label>
+            </div>
+            <div class="flex gap-2">
+              <button type="submit" class="btn-primary text-xs py-1.5 px-4">Simpan</button>
+              <button type="button" onclick="toggleEditShift({{ s.id }})" class="text-xs border border-slate-200 text-slate-500 hover:bg-slate-100 px-3 py-1.5 rounded-lg">Batal</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div class="col-span-3 bg-white rounded-2xl shadow-sm border border-slate-100 py-16 text-center text-slate-400">
+      <p class="text-4xl mb-3">🕐</p><p class="font-semibold">Belum ada shift</p>
+      <p class="text-sm mt-1">Tambahkan shift pertama di atas</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Info Relasi Dept-Shift -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+    <h3 class="font-bold text-slate-800 mb-4">📋 Info: Cara Mengatur Shift per Departemen</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600">
+      <div class="flex gap-3 p-4 bg-blue-50 rounded-xl">
+        <span class="text-2xl">1️⃣</span>
+        <div><p class="font-semibold text-blue-800">Buat Shift</p><p class="text-xs mt-1 text-blue-600">Definisikan jam masuk, keluar, dan toleransi keterlambatan.</p></div>
+      </div>
+      <div class="flex gap-3 p-4 bg-emerald-50 rounded-xl">
+        <span class="text-2xl">2️⃣</span>
+        <div><p class="font-semibold text-emerald-800">Assign ke Departemen</p><p class="text-xs mt-1 text-emerald-600">Di halaman Departemen, klik "Atur Shift" dan pilih shift yang berlaku.</p></div>
+      </div>
+      <div class="flex gap-3 p-4 bg-amber-50 rounded-xl">
+        <span class="text-2xl">3️⃣</span>
+        <div><p class="font-semibold text-amber-800">Per Individu (Opsional)</p><p class="text-xs mt-1 text-amber-600">Di Data Pegawai, set shift khusus per individu untuk menimpa shift departemen.</p></div>
+      </div>
+    </div>
+    <a href="/admin/departemen" class="mt-4 inline-flex items-center gap-2 text-sm text-blue-600 font-semibold hover:underline">
+      → Atur Shift per Departemen
+    </a>
+  </div>
+</div>
+<script>
+function toggleEditShift(id) {
+  document.getElementById('edit-shift-'+id).classList.toggle('hidden');
+}
+</script>
+{% endblock %}

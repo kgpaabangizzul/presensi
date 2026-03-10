@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block body %}
+<div id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="flex" style="height:100dvh;overflow:hidden">
+
+  <!-- Sidebar -->
+  <aside id="sidebar" style="background:linear-gradient(180deg,#0f172a 0%,#1e3a5f 100%);position:fixed;top:0;left:0;height:100%;width:270px;z-index:50;display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1)"
+    class="lg:relative lg:translate-x-0 lg:flex-shrink-0 lg:w-60">
+    <div style="padding:20px 16px 14px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;background:#3b82f6;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg style="width:18px;height:18px;color:#fff" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        </div>
+        <div><p style="color:#fff;font-weight:700;font-size:14px;line-height:1.2">AbsensiPro</p><p style="color:#64748b;font-size:11px">Portal Pegawai</p></div>
+      </div>
+      <button onclick="closeSidebar()" class="lg:hidden" style="color:#64748b;background:none;border:none;cursor:pointer;padding:4px">
+        <svg style="width:20px;height:20px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.08)">
+      <div style="display:flex;align-items:center;gap:10px">
+        {% if session.foto %}<img src="/static/uploads/photos/{{ session.foto }}" style="width:38px;height:38px;border-radius:10px;object-fit:cover;border:2px solid #3b82f6;flex-shrink:0">
+        {% else %}<div style="width:38px;height:38px;border-radius:10px;background:#1d4ed8;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;flex-shrink:0">{{ session.nama[0] if session.nama else 'U' }}</div>{% endif %}
+        <div style="overflow:hidden"><p style="color:#fff;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ session.nama }}</p><p style="color:#64748b;font-size:11px">Pegawai</p></div>
+      </div>
+    </div>
+    <nav style="flex:1;padding:12px;overflow-y:auto">
+      <a href="/dashboard" class="sidebar-link {% if request.path=='/dashboard' %}active{% endif %}">
+        <svg style="width:16px;height:16px;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg> Dashboard
+      </a>
+      <a href="/riwayat" class="sidebar-link {% if '/riwayat' in request.path %}active{% endif %}">
+        <svg style="width:16px;height:16px;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> Riwayat
+      </a>
+      <a href="/izin" class="sidebar-link {% if '/izin' in request.path %}active{% endif %}">
+        <svg style="width:16px;height:16px;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> Pengajuan Izin
+      </a>
+      <a href="/profil" class="sidebar-link {% if '/profil' in request.path %}active{% endif %}">
+        <svg style="width:16px;height:16px;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg> Profil Saya
+      </a>
+    </nav>
+    <div style="padding:12px;border-top:1px solid rgba(255,255,255,.08)">
+      <a href="/logout" class="sidebar-link" style="color:#f87171"><svg style="width:16px;height:16px;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7"/></svg> Keluar</a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0">
+    <!-- Header -->
+    <header style="background:#fff;border-bottom:1px solid #f1f5f9;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:30;box-shadow:0 1px 3px rgba(0,0,0,.04)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button onclick="openSidebar()" class="lg:hidden" style="width:38px;height:38px;border-radius:10px;background:#f8fafc;border:1px solid #e2e8f0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
+          <svg style="width:18px;height:18px;color:#64748b" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <h1 class="page-title" style="font-size:16px;font-weight:700;color:#1e293b;line-height:1.2">{% block page_title %}Dashboard{% endblock %}</h1>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        {% if session.foto %}<img src="/static/uploads/photos/{{ session.foto }}" class="lg:hidden" style="width:32px;height:32px;border-radius:8px;object-fit:cover">{% endif %}
+        <span class="hidden sm:inline" style="font-size:11px;background:#eff6ff;color:#2563eb;padding:4px 10px;border-radius:99px;font-weight:600">Pegawai</span>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div style="flex:1;overflow-y:auto;overflow-x:hidden">
+      <div class="p-4 lg:p-8 pb-nav lg:pb-8">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+
+    <!-- Bottom Nav (mobile only) -->
+    <nav class="bnav lg:hidden">
+      <a href="/dashboard" class="bnav-item {% if request.path=='/dashboard' %}active{% endif %}">
+        <div class="bnav-icon"><svg style="width:20px;height:20px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg></div>
+        Home
+      </a>
+      <a href="/riwayat" class="bnav-item {% if '/riwayat' in request.path %}active{% endif %}">
+        <div class="bnav-icon"><svg style="width:20px;height:20px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div>
+        Riwayat
+      </a>
+      <a href="/izin" class="bnav-item {% if '/izin' in request.path %}active{% endif %}">
+        <div class="bnav-icon"><svg style="width:20px;height:20px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+        Izin
+      </a>
+      <a href="/profil" class="bnav-item {% if '/profil' in request.path %}active{% endif %}">
+        <div class="bnav-icon"><svg style="width:20px;height:20px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></div>
+        Profil
+      </a>
+      <a href="/logout" class="bnav-item danger">
+        <div class="bnav-icon"><svg style="width:20px;height:20px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7"/></svg></div>
+        Keluar
+      </a>
+    </nav>
+  </main>
+</div>
+
+<script>
+const sidebar=document.getElementById('sidebar'),overlay=document.getElementById('sidebarOverlay');
+function openSidebar(){sidebar.style.transform='translateX(0)';overlay.classList.add('show');document.body.style.overflow='hidden'}
+function closeSidebar(){sidebar.style.transform='translateX(-100%)';overlay.classList.remove('show');document.body.style.overflow=''}
+let tx=0;
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=tx-e.changedTouches[0].clientX;
+  if(dx>55&&sidebar.style.transform==='translateX(0px)')closeSidebar();
+  if(tx<20&&dx<-55)openSidebar();
+},{passive:true});
+</script>
+{% endblock %}

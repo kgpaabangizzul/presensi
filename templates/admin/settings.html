@@ -1,0 +1,53 @@
+{% extends 'admin/layout.html' %}
+{% block page_title %}Pengaturan Sistem{% endblock %}
+{% block content %}
+<div class="max-w-2xl">
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
+    <h3 class="font-bold text-slate-800 mb-6">Konfigurasi Sistem Absensi</h3>
+    <form method="POST" class="space-y-5">
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Nama Perusahaan</label>
+        <input type="text" name="nama_perusahaan" value="{{ settings.nama_perusahaan }}" class="input-field" required>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Jam Masuk</label>
+          <input type="time" name="jam_masuk" value="{{ settings.jam_masuk }}" class="input-field" required>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1.5">Jam Keluar</label>
+          <input type="time" name="jam_keluar" value="{{ settings.jam_keluar }}" class="input-field" required>
+        </div>
+      </div>
+      <div class="p-4 bg-blue-50 rounded-xl border border-blue-100">
+        <p class="text-sm font-semibold text-blue-800 mb-3">📍 Lokasi Kantor (GPS)</p>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-blue-700 mb-1">Latitude</label>
+            <input type="number" step="any" name="office_lat" value="{{ settings.office_lat }}" class="input-field text-sm" required>
+          </div>
+          <div>
+            <label class="block text-xs text-blue-700 mb-1">Longitude</label>
+            <input type="number" step="any" name="office_lng" value="{{ settings.office_lng }}" class="input-field text-sm" required>
+          </div>
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-1.5">
+          Radius Absen Maksimal (meter)
+        </label>
+        <input type="number" name="max_distance" value="{{ settings.max_distance }}" class="input-field" min="10" max="5000" required>
+        <p class="text-xs text-slate-400 mt-1">Pegawai harus berada dalam radius ini untuk absen</p>
+      </div>
+      <div class="pt-2">
+        <button type="submit" class="btn-primary px-8 py-3">Simpan Pengaturan</button>
+      </div>
+    </form>
+  </div>
+  <div class="mt-4 bg-amber-50 border border-amber-200 rounded-2xl p-5">
+    <p class="text-sm font-semibold text-amber-800 mb-1">ℹ️ Info Login Default</p>
+    <p class="text-xs text-amber-700">Admin: admin@absensi.com / admin123</p>
+    <p class="text-xs text-amber-700 mt-0.5">Segera ganti password setelah login pertama</p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'admin/layout.html' %}
+{% block page_title %}Grafik & Analitik{% endblock %}
+{% block content %}
+<div class="space-y-6">
+  <div class="flex items-center gap-3">
+    <form method="GET" class="flex gap-2">
+      <input type="month" name="bulan" value="{{ bulan }}" class="input-field w-auto py-2 text-sm">
+      <button type="submit" class="btn-primary">Lihat</button>
+    </form>
+  </div>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <h3 class="font-bold text-slate-800 mb-4">Kehadiran Harian</h3>
+      <canvas id="harianChart" height="200"></canvas>
+    </div>
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <h3 class="font-bold text-slate-800 mb-4">Distribusi Status</h3>
+      <canvas id="pieChart" height="200"></canvas>
+    </div>
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 lg:col-span-2">
+      <h3 class="font-bold text-slate-800 mb-4">Per Departemen</h3>
+      <canvas id="deptChart" height="100"></canvas>
+    </div>
+  </div>
+</div>
+<script>
+const harian = {{ harian|safe }};
+const dept = {{ dept|safe }};
+
+new Chart(document.getElementById('harianChart'), {
+  type: 'bar',
+  data: {
+    labels: harian.map(d => d.tanggal ? d.tanggal.slice(8) : ''),
+    datasets: [
+      { label: 'Hadir', data: harian.map(d => d.hadir), backgroundColor: '#10b981', borderRadius: 4 },
+      { label: 'Telat', data: harian.map(d => d.telat), backgroundColor: '#f59e0b', borderRadius: 4 },
+      { label: 'Izin', data: harian.map(d => d.izin), backgroundColor: '#3b82f6', borderRadius: 4 }
+    ]
+  },
+  options: { responsive: true, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, ticks: { stepSize: 1 } } }, plugins: { legend: { position: 'top' } } }
+});
+
+const totH = dept.reduce((a,d) => a+(d.hadir||0), 0);
+const totT = dept.reduce((a,d) => a+(d.telat||0), 0);
+const totI = dept.reduce((a,d) => a+(d.izin||0), 0);
+new Chart(document.getElementById('pieChart'), {
+  type: 'doughnut',
+  data: { labels: ['Hadir', 'Terlambat', 'Izin'], datasets: [{ data: [totH, totT, totI], backgroundColor: ['#10b981','#f59e0b','#3b82f6'] }] },
+  options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+});
+
+new Chart(document.getElementById('deptChart'), {
+  type: 'bar',
+  data: {
+    labels: dept.map(d => d.departemen || 'Lainnya'),
+    datasets: [
+      { label: 'Hadir', data: dept.map(d => d.hadir||0), backgroundColor: '#10b981', borderRadius: 4 },
+      { label: 'Telat', data: dept.map(d => d.telat||0), backgroundColor: '#f59e0b', borderRadius: 4 },
+      { label: 'Izin', data: dept.map(d => d.izin||0), backgroundColor: '#3b82f6', borderRadius: 4 }
+    ]
+  },
+  options: { responsive: true, scales: { x: { grid: { display: false } }, y: { ticks: { stepSize: 1 } } }, plugins: { legend: { position: 'top' } } }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'admin/layout.html' %}
+{% block page_title %}Kelola Izin{% endblock %}
+{% block content %}
+<div class="bg-white rounded-2xl shadow-sm border border-slate-100">
+  <div class="p-6 border-b border-slate-100">
+    <p class="text-slate-500 text-sm">Daftar permohonan izin / cuti dari pegawai</p>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50"><tr>
+        <th class="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Pegawai</th>
+        <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Jenis</th>
+        <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Tanggal</th>
+        <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Alasan</th>
+        <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Status</th>
+        <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Aksi</th>
+      </tr></thead>
+      <tbody class="divide-y divide-slate-50">
+        {% for r in data %}
+        <tr class="hover:bg-slate-50 {% if r.status=='pending' %}bg-amber-50/30{% endif %}">
+          <td class="px-6 py-3">
+            <p class="font-semibold text-slate-800">{{ r.nama }}</p>
+            <p class="text-xs text-slate-400">{{ r.nik }} • {{ r.departemen }}</p>
+          </td>
+          <td class="px-4 py-3 font-medium text-slate-700">{{ r.jenis }}</td>
+          <td class="px-4 py-3 text-slate-600 text-xs">
+            {{ r.tanggal_mulai }}<br>→ {{ r.tanggal_selesai }}
+          </td>
+          <td class="px-4 py-3 text-slate-500 max-w-xs truncate">{{ r.alasan }}</td>
+          <td class="px-4 py-3">
+            {% if r.status=='approved' %}<span class="badge-hadir">Disetujui</span>
+            {% elif r.status=='rejected' %}<span class="badge-rejected">Ditolak</span>
+            {% else %}<span class="badge-pending">Pending</span>{% endif %}
+          </td>
+          <td class="px-4 py-3">
+            {% if r.status=='pending' %}
+            <div class="flex gap-2">
+              <a href="/admin/izin/{{ r.id }}/approve" class="btn-success px-3 py-1.5 text-xs">✓ Setujui</a>
+              <a href="/admin/izin/{{ r.id }}/reject" class="btn-danger px-3 py-1.5" onclick="return confirm('Tolak izin ini?')">✗ Tolak</a>
+            </div>
+            {% else %}<span class="text-xs text-slate-400">Selesai</span>{% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center py-10 text-slate-400">Tidak ada permohonan izin</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

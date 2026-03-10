@@ -1,0 +1,69 @@
+{% extends 'layout.html' %}
+{% block page_title %}Pengajuan Izin{% endblock %}
+{% block content %}
+<div style="display:flex;flex-direction:column;gap:16px">
+  <!-- Form -->
+  <div class="card" style="padding:20px">
+    <h3 style="font-size:15px;font-weight:700;color:#1e293b;margin-bottom:16px">📝 Ajukan Izin / Cuti</h3>
+    <form method="POST" enctype="multipart/form-data" style="display:flex;flex-direction:column;gap:14px">
+      <div>
+        <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Jenis Izin</label>
+        <select name="jenis" class="input-field" required>
+          <option value="">-- Pilih Jenis --</option>
+          <option>Izin Sakit</option><option>Cuti Tahunan</option>
+          <option>Cuti Melahirkan</option><option>Dinas Luar</option><option>Keperluan Keluarga</option>
+        </select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Tanggal Mulai</label>
+          <input type="date" name="tanggal_mulai" class="input-field" required>
+        </div>
+        <div>
+          <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Tanggal Selesai</label>
+          <input type="date" name="tanggal_selesai" class="input-field" required>
+        </div>
+      </div>
+      <div>
+        <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Alasan</label>
+        <textarea name="alasan" rows="3" class="input-field" placeholder="Jelaskan alasan..." required style="resize:none;font-size:15px"></textarea>
+      </div>
+      <div>
+        <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Lampiran (opsional)</label>
+        <input type="file" name="lampiran" accept="image/*,.pdf" class="input-field" style="padding:10px">
+      </div>
+      <button type="submit" class="btn-primary" style="width:100%;padding:14px;font-size:15px">Kirim Permohonan</button>
+    </form>
+  </div>
+
+  <!-- History -->
+  <div class="card">
+    <div style="padding:14px 16px;border-bottom:1px solid #f1f5f9">
+      <h3 style="font-size:15px;font-weight:700;color:#1e293b">Riwayat Pengajuan</h3>
+    </div>
+    <div>
+      {% for row in data %}
+      <div style="padding:14px 16px;border-bottom:1px solid #f8fafc">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <p style="font-size:14px;font-weight:700;color:#1e293b">{{ row.jenis }}</p>
+              {% if row.status=='approved' %}<span class="badge-hadir">✓ Disetujui</span>
+              {% elif row.status=='rejected' %}<span class="badge-rejected">✗ Ditolak</span>
+              {% else %}<span class="badge-pending">⏳ Menunggu</span>{% endif %}
+            </div>
+            <p style="font-size:12px;color:#64748b;margin-bottom:3px">📅 {{ row.tanggal_mulai }} → {{ row.tanggal_selesai }}</p>
+            <p style="font-size:12px;color:#94a3b8;line-height:1.4">{{ row.alasan }}</p>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div style="padding:48px;text-align:center;color:#94a3b8">
+        <p style="font-size:36px;margin-bottom:8px">📝</p>
+        <p style="font-size:14px;font-weight:600">Belum ada pengajuan izin</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

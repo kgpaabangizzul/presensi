@@ -1,0 +1,214 @@
+{% extends 'admin/layout.html' %}
+{% block page_title %}Data Pegawai{% endblock %}
+{% block content %}
+<div class="space-y-5">
+  <!-- Stats bar -->
+  <div class="grid grid-cols-3 gap-4">
+    <div class="bg-white rounded-xl border border-slate-100 px-5 py-4 flex items-center gap-3 shadow-sm">
+      <div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-lg">👥</div>
+      <div><p class="text-2xl font-bold text-slate-800">{{ stats.total }}</p><p class="text-xs text-slate-400">Total Data</p></div>
+    </div>
+    <div class="bg-white rounded-xl border border-slate-100 px-5 py-4 flex items-center gap-3 shadow-sm">
+      <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center text-lg">✅</div>
+      <div><p class="text-2xl font-bold text-emerald-600">{{ stats.active }}</p><p class="text-xs text-slate-400">Aktif</p></div>
+    </div>
+    <div class="bg-white rounded-xl border border-slate-100 px-5 py-4 flex items-center gap-3 shadow-sm">
+      <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center text-lg">⏳</div>
+      <div><p class="text-2xl font-bold text-amber-600">{{ stats.pending }}</p><p class="text-xs text-slate-400">Menunggu Validasi</p></div>
+    </div>
+  </div>
+
+  <!-- Filter + Tambah -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+    <div class="flex flex-wrap gap-3 items-center justify-between">
+      <form method="GET" class="flex flex-wrap gap-2 items-center">
+        <input type="text" name="q" value="{{ q }}" placeholder="🔍 Cari nama / NIK / email..." class="input-field w-56 py-2 text-sm">
+        <select name="status" class="input-field w-36 py-2 text-sm">
+          <option value="">Semua Status</option>
+          <option value="active" {% if status_filter=='active' %}selected{% endif %}>Aktif</option>
+          <option value="pending" {% if status_filter=='pending' %}selected{% endif %}>Pending</option>
+          <option value="rejected" {% if status_filter=='rejected' %}selected{% endif %}>Nonaktif</option>
+        </select>
+        <select name="dept" class="input-field w-40 py-2 text-sm">
+          <option value="">Semua Dept</option>
+          {% for d in depts %}
+          <option value="{{ d.id }}" {% if dept_filter==d.id|string %}selected{% endif %}>{{ d.nama }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn-primary py-2 px-4">Filter</button>
+        {% if q or status_filter or dept_filter %}<a href="/admin/pegawai" class="text-xs text-slate-400 hover:text-slate-600">Reset</a>{% endif %}
+      </form>
+      <button onclick="toggleTambah()" class="btn-success flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        Tambah Pegawai
+      </button>
+    </div>
+
+    <!-- Form Tambah Pegawai -->
+    <div id="form-tambah" class="hidden mt-5 p-5 bg-slate-50 rounded-2xl border border-slate-200">
+      <h4 class="font-bold text-slate-700 mb-4">Form Tambah Pegawai Baru</h4>
+      <form method="POST" action="/admin/pegawai/tambah" enctype="multipart/form-data">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-4">
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">Foto</label>
+            <input type="file" name="foto" accept="image/*" class="input-field text-xs py-1.5 p-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">NIK *</label>
+            <input type="text" name="nik" required placeholder="EMP001" class="input-field text-sm py-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">Nama Lengkap *</label>
+            <input type="text" name="nama" required placeholder="Nama sesuai KTP" class="input-field text-sm py-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">Email *</label>
+            <input type="email" name="email" required placeholder="email@perusahaan.com" class="input-field text-sm py-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">Password *</label>
+            <input type="password" name="password" required placeholder="Min. 6 karakter" minlength="6" class="input-field text-sm py-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">Jabatan</label>
+            <input type="text" name="jabatan" placeholder="cth: Staff IT" class="input-field text-sm py-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">Departemen</label>
+            <select name="departemen_id" class="input-field text-sm py-2">
+              <option value="">-- Pilih --</option>
+              {% for d in depts %}<option value="{{ d.id }}">{{ d.nama }}</option>{% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">Shift Khusus (Opsional)</label>
+            <select name="shift_id" class="input-field text-sm py-2">
+              <option value="">-- Ikut Departemen --</option>
+              {% for s in shifts %}<option value="{{ s.id }}">{{ s.nama }} ({{ s.jam_masuk }}-{{ s.jam_keluar }})</option>{% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">No. HP</label>
+            <input type="text" name="no_hp" placeholder="08xxxxxxxxxx" class="input-field text-sm py-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">Tanggal Lahir</label>
+            <input type="date" name="tanggal_lahir" class="input-field text-sm py-2">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">Jenis Kelamin</label>
+            <select name="jenis_kelamin" class="input-field text-sm py-2">
+              <option value="">--</option><option>Laki-laki</option><option>Perempuan</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1">Status Akun</label>
+            <select name="status" class="input-field text-sm py-2">
+              <option value="active">Aktif</option>
+              <option value="pending">Pending</option>
+            </select>
+          </div>
+          <div class="col-span-2 md:col-span-3">
+            <label class="text-xs font-semibold text-slate-600 block mb-1">Alamat</label>
+            <input type="text" name="alamat" placeholder="Alamat lengkap" class="input-field text-sm py-2">
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button type="submit" class="btn-primary">Simpan Pegawai</button>
+          <button type="button" onclick="toggleTambah()" class="border border-slate-200 text-slate-600 text-sm font-semibold px-4 py-2 rounded-xl hover:bg-slate-50">Batal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Tabel Pegawai -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-50">
+          <tr>
+            <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase">Pegawai</th>
+            <th class="text-left px-3 py-3 text-xs font-semibold text-slate-500 uppercase">NIK</th>
+            <th class="text-left px-3 py-3 text-xs font-semibold text-slate-500 uppercase">Departemen</th>
+            <th class="text-left px-3 py-3 text-xs font-semibold text-slate-500 uppercase">Shift</th>
+            <th class="text-left px-3 py-3 text-xs font-semibold text-slate-500 uppercase">Kontak</th>
+            <th class="text-left px-3 py-3 text-xs font-semibold text-slate-500 uppercase">Status</th>
+            <th class="text-left px-3 py-3 text-xs font-semibold text-slate-500 uppercase">Aksi</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-50">
+          {% for u in users %}
+          <tr class="hover:bg-slate-50 transition-colors {% if u.status=='pending' %}bg-amber-50/40{% endif %}">
+            <td class="px-5 py-3">
+              <div class="flex items-center gap-3">
+                {% if u.foto %}
+                <img src="/static/uploads/photos/{{ u.foto }}" class="w-10 h-10 rounded-xl object-cover border border-slate-200 cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all" onclick="showPhoto('/static/uploads/photos/{{ u.foto }}','{{ u.nama }}')">
+                {% else %}
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+                  style="background: {{ u.dept_warna or '#3b82f6' }}">{{ u.nama[0] }}</div>
+                {% endif %}
+                <div class="min-w-0">
+                  <p class="font-semibold text-slate-800 truncate max-w-32">{{ u.nama }}</p>
+                  <p class="text-xs text-slate-400 truncate">{{ u.email }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-3 py-3 font-mono text-xs text-slate-600 font-semibold">{{ u.nik }}</td>
+            <td class="px-3 py-3">
+              {% if u.dept_nama %}
+              <span class="text-xs font-semibold px-2 py-1 rounded-lg" style="background:{{ u.dept_warna or '#3b82f6' }}22; color:{{ u.dept_warna or '#3b82f6' }}">{{ u.dept_nama }}</span>
+              {% else %}<span class="text-slate-300 text-xs">-</span>{% endif %}
+              {% if u.jabatan %}<p class="text-xs text-slate-400 mt-0.5">{{ u.jabatan }}</p>{% endif %}
+            </td>
+            <td class="px-3 py-3">
+              {% if u.shift_nama %}
+              <p class="text-xs font-semibold text-slate-700">{{ u.shift_nama }}</p>
+              <p class="text-xs text-slate-400">{{ u.shift_masuk }}–{{ u.shift_keluar }}</p>
+              {% else %}<span class="text-slate-300 text-xs">Ikut Dept</span>{% endif %}
+            </td>
+            <td class="px-3 py-3 text-xs text-slate-500">{{ u.no_hp or '-' }}</td>
+            <td class="px-3 py-3">
+              {% if u.status=='active' %}<span class="badge-active">Aktif</span>
+              {% elif u.status=='pending' %}<span class="badge-pending">⏳ Pending</span>
+              {% else %}<span class="badge-rejected">Nonaktif</span>{% endif %}
+            </td>
+            <td class="px-3 py-3">
+              <div class="flex items-center gap-1 flex-wrap">
+                {% if u.status=='pending' %}
+                <a href="/admin/validasi/{{ u.id }}/approve" class="btn-success px-2 py-1 text-xs">✓</a>
+                <a href="/admin/validasi/{{ u.id }}/reject" class="btn-danger px-2 py-1" onclick="return confirm('Tolak akun {{ u.nama }}?')">✗</a>
+                {% endif %}
+                <a href="/admin/pegawai/edit/{{ u.id }}" class="text-xs bg-blue-50 hover:bg-blue-100 text-blue-600 font-semibold px-2 py-1 rounded-lg transition-colors">✏ Edit</a>
+                <form method="POST" action="/admin/pegawai/hapus/{{ u.id }}" onsubmit="return confirm('Hapus/nonaktifkan {{ u.nama }}?')">
+                  <button type="submit" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 font-semibold px-2 py-1 rounded-lg transition-colors">🗑</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="7" class="text-center py-12 text-slate-400">
+            <p class="text-3xl mb-2">👥</p><p class="font-semibold">Tidak ada data pegawai</p>
+          </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="px-5 py-3 border-t border-slate-100 text-xs text-slate-400">Menampilkan {{ users|length }} pegawai</div>
+  </div>
+</div>
+
+<!-- Photo Modal -->
+<div id="photoModal" class="hidden fixed inset-0 bg-black/70 z-50 flex flex-col items-center justify-center gap-3" onclick="this.classList.add('hidden')">
+  <p id="photoName" class="text-white font-semibold text-sm"></p>
+  <img id="photoModalImg" src="" class="max-w-sm max-h-96 rounded-2xl shadow-2xl">
+  <p class="text-white/50 text-xs">Klik di mana saja untuk tutup</p>
+</div>
+<script>
+function toggleTambah() { document.getElementById('form-tambah').classList.toggle('hidden'); }
+function showPhoto(src, name) {
+  document.getElementById('photoModalImg').src = src;
+  document.getElementById('photoName').textContent = name;
+  document.getElementById('photoModal').classList.remove('hidden');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,201 @@
+{% extends 'admin/layout.html' %}
+{% block page_title %}Dashboard Admin{% endblock %}
+{% block content %}
+<div class="space-y-6">
+  <!-- KPI Row -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3">
+    <div class="stat-card col-span-1">
+      <div class="flex justify-between items-start mb-2"><p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Pegawai</p><span class="text-lg">👥</span></div>
+      <p class="text-3xl font-bold text-slate-800">{{ total_user }}</p>
+      <p class="text-xs text-slate-400 mt-1">Aktif</p>
+    </div>
+    <div class="stat-card border-l-4 border-emerald-400">
+      <div class="flex justify-between items-start mb-2"><p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Hadir</p><span class="text-lg">✅</span></div>
+      <p class="text-3xl font-bold text-emerald-600">{{ hadir_today }}</p>
+      <p class="text-xs text-slate-400 mt-1">Hari ini</p>
+    </div>
+    <div class="stat-card border-l-4 border-amber-400">
+      <div class="flex justify-between items-start mb-2"><p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Terlambat</p><span class="text-lg">⏰</span></div>
+      <p class="text-3xl font-bold text-amber-600">{{ telat_today }}</p>
+      <p class="text-xs text-slate-400 mt-1">Hari ini</p>
+    </div>
+    <div class="stat-card border-l-4 border-purple-400">
+      <div class="flex justify-between items-start mb-2"><p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Pending</p><span class="text-lg">👤</span></div>
+      <p class="text-3xl font-bold text-purple-600">{{ pending }}</p>
+      <p class="text-xs text-slate-400 mt-1"><a href="/admin/pegawai?status=pending" class="underline hover:text-purple-600">Validasi</a></p>
+    </div>
+    <div class="stat-card border-l-4 border-orange-400">
+      <div class="flex justify-between items-start mb-2"><p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Izin</p><span class="text-lg">📝</span></div>
+      <p class="text-3xl font-bold text-orange-600">{{ izin_pending }}</p>
+      <p class="text-xs text-slate-400 mt-1"><a href="/admin/izin" class="underline hover:text-orange-600">Proses</a></p>
+    </div>
+    <div class="stat-card border-l-4 border-blue-400">
+      <div class="flex justify-between items-start mb-2"><p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Departemen</p><span class="text-lg">🏢</span></div>
+      <p class="text-3xl font-bold text-blue-600">{{ total_dept }}</p>
+      <p class="text-xs text-slate-400 mt-1"><a href="/admin/departemen" class="underline hover:text-blue-600">Kelola</a></p>
+    </div>
+    <div class="stat-card border-l-4 border-teal-400">
+      <div class="flex justify-between items-start mb-2"><p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Shift</p><span class="text-lg">🕐</span></div>
+      <p class="text-3xl font-bold text-teal-600">{{ total_shift }}</p>
+      <p class="text-xs text-slate-400 mt-1"><a href="/admin/shift" class="underline hover:text-teal-600">Kelola</a></p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Chart -->
+    <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <h3 class="font-bold text-slate-800 mb-4">Tren Kehadiran 7 Hari Terakhir</h3>
+      <canvas id="trendChart" height="130"></canvas>
+    </div>
+    <!-- Dept Donut -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-slate-800">Per Departemen</h3>
+        <a href="/admin/departemen" class="text-xs text-blue-600 hover:underline">Kelola →</a>
+      </div>
+      <canvas id="deptChart" height="180"></canvas>
+      <div class="space-y-2 mt-4">
+        {% for d in dept_stats %}
+        <div class="flex items-center justify-between text-sm">
+          <div class="flex items-center gap-2">
+            <div class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background:{{ d.warna }}"></div>
+            <span class="text-slate-600 truncate max-w-28">{{ d.departemen or '-' }}</span>
+          </div>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="text-slate-400">{{ d.total_pegawai }} org</span>
+            <span class="font-bold text-emerald-600">{{ d.hadir_today }} hadir</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Master Data Ringkasan -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Departemen Quick View -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+        <h3 class="font-bold text-slate-800">🏢 Departemen Aktif</h3>
+        <a href="/admin/departemen" class="btn-primary text-xs px-3 py-1.5">+ Kelola</a>
+      </div>
+      <div class="divide-y divide-slate-50">
+        {% for d in recent_depts %}
+        <div class="flex items-center justify-between px-6 py-3 hover:bg-slate-50 transition-colors">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold" style="background:{{ d.warna }}">
+              {{ d.kode[:2] }}
+            </div>
+            <div>
+              <p class="font-semibold text-slate-800 text-sm">{{ d.nama }}</p>
+              <p class="text-xs text-slate-400">{{ d.kode }}</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-bold text-slate-700">{{ d.jml }}</p>
+            <p class="text-xs text-slate-400">pegawai</p>
+          </div>
+        </div>
+        {% else %}
+        <div class="px-6 py-8 text-center text-slate-400 text-sm">Belum ada departemen</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Shift Quick View -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+        <h3 class="font-bold text-slate-800">🕐 Shift Aktif</h3>
+        <a href="/admin/shift" class="btn-primary text-xs px-3 py-1.5">+ Kelola</a>
+      </div>
+      <div class="divide-y divide-slate-50">
+        {% for s in recent_shifts %}
+        <div class="flex items-center justify-between px-6 py-3 hover:bg-slate-50 transition-colors">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold" style="background:{{ s.warna }}">
+              {{ loop.index }}
+            </div>
+            <div>
+              <p class="font-semibold text-slate-800 text-sm">{{ s.nama }}</p>
+              <p class="text-xs text-slate-400">{{ s.jam_masuk }} – {{ s.jam_keluar }}</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-bold text-slate-700">{{ s.jml }}</p>
+            <p class="text-xs text-slate-400">pegawai</p>
+          </div>
+        </div>
+        {% else %}
+        <div class="px-6 py-8 text-center text-slate-400 text-sm">Belum ada shift</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Absensi -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+      <h3 class="font-bold text-slate-800">Absensi Terbaru – {{ today }}</h3>
+      <a href="/admin/absensi" class="text-xs text-blue-600 font-semibold hover:underline">Lihat Semua →</a>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-50"><tr>
+          <th class="text-left px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Pegawai</th>
+          <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Shift</th>
+          <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Masuk</th>
+          <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Keluar</th>
+          <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Jarak</th>
+          <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Status</th>
+        </tr></thead>
+        <tbody class="divide-y divide-slate-50">
+          {% for r in recent %}
+          <tr class="hover:bg-slate-50">
+            <td class="px-6 py-3">
+              <div class="flex items-center gap-3">
+                {% if r.foto %}<img src="/static/uploads/photos/{{ r.foto }}" class="w-8 h-8 rounded-lg object-cover border border-slate-200">
+                {% else %}<div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700">{{ r.nama[0] }}</div>{% endif %}
+                <div><p class="font-semibold text-slate-800">{{ r.nama }}</p><p class="text-xs text-slate-400">{{ r.jabatan }}</p></div>
+              </div>
+            </td>
+            <td class="px-4 py-3 text-xs text-slate-500">{{ r.shift_nama or '-' }}</td>
+            <td class="px-4 py-3 font-mono text-slate-600 text-sm">{{ r.jam_masuk or '-' }}</td>
+            <td class="px-4 py-3 font-mono text-slate-600 text-sm">{{ r.jam_keluar or '-' }}</td>
+            <td class="px-4 py-3 text-slate-500 text-xs">{{ "%.0fm"|format(r.jarak_masuk) if r.jarak_masuk else '-' }}</td>
+            <td class="px-4 py-3">
+              {% if r.status=='hadir' %}<span class="badge-hadir">Hadir</span>
+              {% elif r.status=='telat' %}<span class="badge-telat">Terlambat</span>
+              {% else %}<span class="badge-izin">{{ r.status }}</span>{% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="text-center py-8 text-slate-400">Belum ada absensi hari ini</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const chartData = {{ chart_data|safe }};
+new Chart(document.getElementById('trendChart'), {
+  type: 'line',
+  data: {
+    labels: chartData.map(d => d.tanggal.slice(5)),
+    datasets: [
+      { label: 'Hadir', data: chartData.map(d => d.hadir), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.08)', tension: 0.4, fill: true, pointBackgroundColor: '#10b981', pointRadius: 5 },
+      { label: 'Terlambat', data: chartData.map(d => d.telat), borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.08)', tension: 0.4, fill: true, pointBackgroundColor: '#f59e0b', pointRadius: 5 }
+    ]
+  },
+  options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+});
+const depts = {{ dept_stats|tojson }};
+new Chart(document.getElementById('deptChart'), {
+  type: 'doughnut',
+  data: { labels: depts.map(d => d.departemen||'Lainnya'), datasets: [{ data: depts.map(d => d.total_pegawai||1), backgroundColor: depts.map(d => d.warna||'#3b82f6'), borderWidth: 2, borderColor: '#fff' }] },
+  options: { responsive: true, cutout: '65%', plugins: { legend: { display: false } } }
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block body %}
+<div id="adminSidebarOverlay" onclick="closeAdminSidebar()"></div>
+<div class="flex" style="height:100dvh;overflow:hidden">
+
+  <!-- Admin Sidebar -->
+  <aside id="adminSidebar" style="background:linear-gradient(180deg,#0c1120 0%,#1a2744 100%);position:fixed;top:0;left:0;height:100%;width:240px;z-index:50;display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1)"
+    class="lg:relative lg:translate-x-0 lg:flex-shrink-0">
+    <div style="padding:16px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;background:#f59e0b;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg style="width:18px;height:18px;color:#fff" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        </div>
+        <div><p style="color:#fff;font-weight:700;font-size:13px;line-height:1.2">Admin Panel</p><p style="color:#64748b;font-size:10px">AbsensiPro</p></div>
+      </div>
+      <button onclick="closeAdminSidebar()" class="lg:hidden" style="color:#64748b;background:none;border:none;cursor:pointer;padding:4px">
+        <svg style="width:18px;height:18px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.08)">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:34px;height:34px;border-radius:10px;background:#d97706;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0">A</div>
+        <div style="overflow:hidden"><p style="color:#fff;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ session.nama }}</p><p style="color:#f59e0b;font-size:10px">Administrator</p></div>
+      </div>
+    </div>
+    <nav style="flex:1;padding:10px;overflow-y:auto">
+      <p style="color:#475569;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:8px 10px 4px">Utama</p>
+      <a href="/admin" class="sidebar-link {% if request.path=='/admin' %}active{% endif %}">
+        <svg style="width:15px;height:15px;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard
+      </a>
+      <a href="/admin/pegawai" class="sidebar-link {% if '/pegawai' in request.path %}active{% endif %}">
+        <svg style="width:15px;height:15px;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Data Pegawai
+      </a>
+      <a href="/admin/absensi" class="sidebar-link {% if '/admin/absensi' in request.path %}active{% endif %}">
+        <svg style="width:15px;height:15px;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Data Absensi
+      </a>
+      <a href="/admin/izin" class="sidebar-link {% if '/admin/izin' in request.path %}active{% endif %}">
+        <svg style="width:15px;height:15px;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Kelola Izin
+      </a>
+      <p style="color:#475569;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:10px 10px 4px">Master Data</p>
+      <a href="/admin/departemen" class="sidebar-link {% if '/admin/departemen' in request.path %}active{% endif %}">
+        <svg style="width:15px;height:15px;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>Departemen
+      </a>
+      <a href="/admin/shift" class="sidebar-link {% if '/admin/shift' in request.path %}active{% endif %}">
+        <svg style="width:15px;height:15px;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Master Shift
+      </a>
+      <p style="color:#475569;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:10px 10px 4px">Laporan</p>
+      <a href="/admin/grafik" class="sidebar-link {% if '/admin/grafik' in request.path %}active{% endif %}">
+        <svg style="width:15px;height:15px;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Grafik
+      </a>
+      <a href="/admin/laporan" class="sidebar-link {% if '/admin/laporan' in request.path %}active{% endif %}">
+        <svg style="width:15px;height:15px;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Laporan
+      </a>
+      <p style="color:#475569;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:10px 10px 4px">Sistem</p>
+      <a href="/admin/settings" class="sidebar-link {% if '/settings' in request.path %}active{% endif %}">
+        <svg style="width:15px;height:15px;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>Pengaturan
+      </a>
+    </nav>
+    <div style="padding:10px;border-top:1px solid rgba(255,255,255,.08)">
+      <a href="/logout" class="sidebar-link" style="color:#f87171">
+        <svg style="width:15px;height:15px;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7"/></svg>Keluar
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0">
+    <header style="background:#fff;border-bottom:1px solid #f1f5f9;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:30;box-shadow:0 1px 3px rgba(0,0,0,.04)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button onclick="openAdminSidebar()" class="lg:hidden" style="width:38px;height:38px;border-radius:10px;background:#f8fafc;border:1px solid #e2e8f0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
+          <svg style="width:18px;height:18px;color:#64748b" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <h1 class="page-title" style="font-size:16px;font-weight:700;color:#1e293b">{% block page_title %}{% endblock %}</h1>
+      </div>
+      <span style="font-size:11px;background:#fffbeb;color:#d97706;padding:4px 10px;border-radius:99px;font-weight:700;white-space:nowrap">⚙ Admin</span>
+    </header>
+    <div style="flex:1;overflow-y:auto;overflow-x:hidden">
+      <div class="p-4 lg:p-8 pb-nav lg:pb-8">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+    <!-- Admin bottom nav mobile -->
+    <nav class="bnav lg:hidden">
+      <a href="/admin" class="bnav-item {% if request.path=='/admin' %}active{% endif %}">
+        <div class="bnav-icon"><svg style="width:19px;height:19px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+        Dasbor
+      </a>
+      <a href="/admin/pegawai" class="bnav-item {% if '/pegawai' in request.path %}active{% endif %}">
+        <div class="bnav-icon"><svg style="width:19px;height:19px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+        Pegawai
+      </a>
+      <a href="/admin/absensi" class="bnav-item {% if '/admin/absensi' in request.path %}active{% endif %}">
+        <div class="bnav-icon"><svg style="width:19px;height:19px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div>
+        Absensi
+      </a>
+      <a href="/admin/izin" class="bnav-item {% if '/admin/izin' in request.path %}active{% endif %}">
+        <div class="bnav-icon"><svg style="width:19px;height:19px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+        Izin
+      </a>
+      <a href="#" onclick="openAdminSidebar()" class="bnav-item">
+        <div class="bnav-icon"><svg style="width:19px;height:19px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></div>
+        Menu
+      </a>
+    </nav>
+  </main>
+</div>
+<script>
+const as=document.getElementById('adminSidebar'),ao=document.getElementById('adminSidebarOverlay');
+function openAdminSidebar(){as.style.transform='translateX(0)';ao.classList.add('show');document.body.style.overflow='hidden'}
+function closeAdminSidebar(){as.style.transform='translateX(-100%)';ao.classList.remove('show');document.body.style.overflow=''}
+let tx=0;
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=tx-e.changedTouches[0].clientX;
+  if(dx>55&&as.style.transform==='translateX(0px)')closeAdminSidebar();
+  if(tx<20&&dx<-55)openAdminSidebar();
+},{passive:true});
+</script>
+{% endblock %}
