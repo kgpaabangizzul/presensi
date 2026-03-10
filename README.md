@@ -53,7 +53,7 @@ Buka browser: **http://localhost:5000**
 ## 🔑 Login Default
 | Role | Email | Password |
 |------|-------|----------|
-| Admin | admin@absensi.com | admin123 |
+
 
 ## 📁 Struktur Proyek
 ```
