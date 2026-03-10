@@ -354,24 +354,17 @@ def izin():
 def profil():
     uid=session['user_id']; conn=get_db()
     if request.method=='POST':
-        no_hp=request.form.get('no_hp',''); alamat=request.form.get('alamat',''); foto_path=None
-        if 'foto' in request.files:
-            f=request.files['foto']
-            if f and f.filename and allowed_file(f.filename):
-                ext=f.filename.rsplit('.',1)[-1].lower()
-                fn=secure_filename(f"user_{uid}_{datetime.now().strftime('%Y%m%d%H%M%S')}.{ext}")
-                f.save(os.path.join(app.config['UPLOAD_FOLDER'],fn)); foto_path=fn
-        if foto_path:
-            conn.execute("UPDATE users SET no_hp=?,alamat=?,foto=? WHERE id=?",(no_hp,alamat,foto_path,uid))
-            session['foto']=foto_path
-        else: conn.execute("UPDATE users SET no_hp=?,alamat=? WHERE id=?",(no_hp,alamat,uid))
-        conn.commit(); flash('Profil berhasil diperbarui!','success')
+        ...
     user=conn.execute("""SELECT u.*,d.nama as dept_nama,d.warna as dept_warna,
         s.nama as shift_nama,s.jam_masuk as shift_masuk,s.jam_keluar as shift_keluar
         FROM users u LEFT JOIN departemen d ON u.departemen_id=d.id
         LEFT JOIN shift s ON u.shift_id=s.id WHERE u.id=?""",(uid,)).fetchone()
-    conn.close(); return render_template('profil.html',user=user)
-
+    conn.close()
+    if not user:
+        session.clear()
+        flash('Sesi tidak valid, silakan login kembali.', 'warning')
+        return redirect(url_for('login'))
+    return render_template('profil.html',user=user)
 # ---- ADMIN DASHBOARD ----
 @app.route('/admin')
 @admin_required
